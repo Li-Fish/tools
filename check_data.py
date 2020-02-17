@@ -16,7 +16,7 @@ def get_solution_list(pid, limit_num):
 
 
 def down_code(pid, num):
-    solution_list = get_solution_list(1000, num)
+    solution_list = get_solution_list(pid, num)
     tmp = json.loads(solution_list.content)
 
     code_list = []
@@ -92,4 +92,4 @@ if __name__ == '__main__':
     pid = int(sys.argv[1])
     logging.info('check problem: ' + str(pid))
     login()
-    check_problem(1000, '.')
+    check_problem(pid, '.')
