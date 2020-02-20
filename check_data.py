@@ -27,7 +27,7 @@ def down_code(pid, num):
         code_list.append(get_code(sid))
 
         cnt_ += 1
-        logging.info('downloading\tpid: {}\tcode: {}/{}'.format(pid, cnt_, len(tmp['data']['rows'])))
+        logging.info('downloading\tpid: {}\tsid:{}\tcode: {}/{}'.format(pid, sid, cnt_, len(tmp['data']['rows'])))
 
     return code_list
 
@@ -55,9 +55,14 @@ def check_problem(pid, data_path):
             data_list.append(x[:-3])
 
     for x in code_list:
+        if x is None:
+            continue
         open('test.cpp', 'w').write(x)
-        # logging.info(x)
-        os.system('g++ test.cpp')
+        rst_code = os.system('g++ test.cpp -ansi')
+        logging.info(rst_code)
+        if rst_code != 0:
+            continue
+
         cnt_ = 0
         for y in data_list:
             cnt_ += 1
@@ -67,14 +72,15 @@ def check_problem(pid, data_path):
             t1 = open('test.out').read()
             t2 = open(data_path + '/' + y + '.out').read()
 
-            while t1[-1] == '\n':
+            while len(t1) != 0 and t1[-1] == '\n':
                 t1 = t1[:-1]
-            while t2[-1] == '\n':
+            while len(t2) != 0 and t2[-1] == '\n':
                 t2 = t2[:-1]
 
             if t1 != t2:
                 logging.error('pid {} error in test case {}'.format(pid, y))
-                return False
+                # return False
+                break
 
     os.remove('test.cpp')
     os.remove('test.out')
